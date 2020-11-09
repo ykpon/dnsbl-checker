@@ -21,15 +21,25 @@ var dnsblList map[string]string = map[string]string{
 	"noptr.spamrats.com":     "SpamRats",
 }
 
-// IPIsListed Check IP is listed in spam blacklists
-func IPIsListed(ip string) (ipInList []string, listen bool) {
+// GetReverseIP function
+func GetReverseIP(ip string) (string, error) {
 	sliceIP := strings.Split(ip, ".")
 
 	if len(sliceIP) < 4 {
-		return
+		return "", fmt.Errorf("Error octets parsing")
 	}
 
-	reverseIP := fmt.Sprintf("%s.%s.%s.%s", sliceIP[3], sliceIP[2], sliceIP[1], sliceIP[0])
+	return fmt.Sprintf("%s.%s.%s.%s", sliceIP[3], sliceIP[2], sliceIP[1], sliceIP[0]), nil
+}
+
+// IPIsListed Check IP is listed in spam blacklists
+func IPIsListed(ip string) (ipInList []string, listen bool) {
+
+	reverseIP, err := GetReverseIP(ip)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	for dnsbl, dnsblName := range dnsblList {
 		address := fmt.Sprintf("%s.%s", reverseIP, dnsbl)
