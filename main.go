@@ -1,38 +1,14 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/gorilla/mux"
 )
 
-type telegramBot struct {
-	bot    *tgbotapi.BotAPI
-	err    error
-	token  string
-	chatID int64
-}
-
-type config struct {
-	TelegramBotToken      string `json:"TELEGRAM_BOT_TOKEN"`
-	TelegramChannelChatID int64  `json:"TELEGRAM_CHANNEL_CHAT_ID"`
-}
-
 var bot telegramBot
-
-func (t *telegramBot) init() {
-	t.bot, t.err = tgbotapi.NewBotAPI(t.token)
-
-}
-func (t telegramBot) sendMessageToChannel(text string) {
-	msg := tgbotapi.NewMessage(t.chatID, text)
-	t.bot.Send(msg)
-}
 
 func findIP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -50,19 +26,6 @@ func findIP(w http.ResponseWriter, r *http.Request) {
 		}
 	}(params)
 
-}
-
-func loadConf() config {
-	file, _ := os.Open("config.json")
-	defer file.Close()
-	decoder := json.NewDecoder(file)
-	configuration := config{}
-	err := decoder.Decode(&configuration)
-	if err != nil {
-		panic(err)
-	}
-
-	return configuration
 }
 
 func main() {
