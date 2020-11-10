@@ -4,7 +4,7 @@
 - [ ] Queue support, adding IPs from API and handle by queue
 - [ ] Info about dnsbl servers, link to details for ip
 
-## Example №1 Check all IP-Addresses in subnets
+## Example. Check all IP-Addresses in subnets
 ```golang
 package main
 
@@ -68,9 +68,5 @@ func main() {
 		}
 	}
 	limit.Wait()
-}
-
-func worker(ip string, wg *sync.WaitGroup) {
-	defer wg.Done()
 }
 ```
