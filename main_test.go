@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/ykpon/dnsbl-checker/internal/dnsbl"
+	"github.com/ykpon/dnsbl-checker/lib/dnsbl"
 )
 
 func TestCheckIPIsListedFunc(t *testing.T) {

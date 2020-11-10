@@ -10,6 +10,7 @@ type config struct {
 	TelegramChannelChatID int64  `json:"TELEGRAM_CHANNEL_CHAT_ID"`
 }
 
+// LoadConf func ...
 func LoadConf() config {
 	file, _ := os.Open("config.json")
 	defer file.Close()

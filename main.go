@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/ykpon/dnsbl-checker/internal/config"
-	"github.com/ykpon/dnsbl-checker/internal/dnsbl"
+	"github.com/ykpon/dnsbl-checker/config"
+	"github.com/ykpon/dnsbl-checker/lib/dnsbl"
 )
 
 var bot telegramBot
@@ -32,7 +32,6 @@ func findIP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	config := config.LoadConf()
-	fmt.Println(config)
 
 	bot = telegramBot{token: config.TelegramBotToken, chatID: config.TelegramChannelChatID}
 	bot.init()
