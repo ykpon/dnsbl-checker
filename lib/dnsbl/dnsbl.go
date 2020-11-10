@@ -4,18 +4,15 @@ import (
 	"fmt"
 	"net"
 	"strings"
+
+	"github.com/ykpon/dnsbl-checker/lib/servers"
 )
 
 var _, listenSubnet, _ = net.ParseCIDR("127.0.0.0/24")
+var serverList []servers.Server
 
-var dnsblList map[string]string = map[string]string{
-	"zen.spamhaus.org":       "SpamHaus",
-	"bl.spamcop.net":         "SpamCop",
-	"dnsbl-3.uceprotect.net": "UceProtect",
-	"dnsbl.spfbl.net":        "SpfBL",
-	"b.barracudacentral.org": "Barracuda",
-	"noptr.spamrats.com":     "SpamRats",
-	"dnsbl.sorbs.net":        "SORBs",
+func init() {
+	serverList = servers.GetServers()
 }
 
 // GetReverseIP function
@@ -38,8 +35,8 @@ func IPIsListed(ip string) (ipInList []string, listen bool) {
 		return
 	}
 
-	for dnsbl, dnsblName := range dnsblList {
-		address := fmt.Sprintf("%s.%s", reverseIP, dnsbl)
+	for _, dnsbl := range serverList {
+		address := fmt.Sprintf("%s.%s", reverseIP, dnsbl.Host)
 		lookupResult, err := lookupIP(address)
 		if err != nil {
 			// here may "no such host" error, so host is wrong or address not listed in bl
@@ -54,7 +51,7 @@ func IPIsListed(ip string) (ipInList []string, listen bool) {
 				}
 
 				if listenSubnet.Contains(v) {
-					ipInList = append(ipInList, dnsblName)
+					ipInList = append(ipInList, dnsbl.Name)
 					finded = true
 					break
 				}

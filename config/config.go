@@ -12,7 +12,7 @@ type config struct {
 
 // LoadConf func ...
 func LoadConf() config {
-	file, _ := os.Open("config.json")
+	file, _ := os.Open("resources/config.json")
 	defer file.Close()
 	decoder := json.NewDecoder(file)
 	configuration := config{}
