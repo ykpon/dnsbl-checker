@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/ykpon/dnsbl-checker/internal/config"
+	"github.com/ykpon/dnsbl-checker/internal/dnsbl"
 )
 
 var bot telegramBot
@@ -14,7 +16,7 @@ func findIP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	go func(p map[string]string) {
-		dnsbls, isListed := IPIsListed(p["ip"])
+		dnsbls, isListed := dnsbl.IPIsListed(p["ip"])
 
 		if isListed {
 			msg := fmt.Sprintf("Info about IP: %s", p["ip"])
@@ -29,7 +31,7 @@ func findIP(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	config := loadConf()
+	config := config.LoadConf()
 	fmt.Println(config)
 
 	bot = telegramBot{token: config.TelegramBotToken, chatID: config.TelegramChannelChatID}

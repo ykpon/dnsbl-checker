@@ -1,4 +1,4 @@
-package main
+package config
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ type config struct {
 	TelegramChannelChatID int64  `json:"TELEGRAM_CHANNEL_CHAT_ID"`
 }
 
-func loadConf() config {
+func LoadConf() config {
 	file, _ := os.Open("config.json")
 	defer file.Close()
 	decoder := json.NewDecoder(file)
