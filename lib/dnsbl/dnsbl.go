@@ -6,11 +6,7 @@ import (
 	"strings"
 )
 
-var listenIps []string = []string{
-	"127.0.0.2",
-	"127.0.0.3",
-	"127.0.0.4",
-}
+var _, listenSubnet, _ = net.ParseCIDR("127.0.0.0/24")
 
 var dnsblList map[string]string = map[string]string{
 	"zen.spamhaus.org":       "SpamHaus",
@@ -19,6 +15,7 @@ var dnsblList map[string]string = map[string]string{
 	"dnsbl.spfbl.net":        "SpfBL",
 	"b.barracudacentral.org": "Barracuda",
 	"noptr.spamrats.com":     "SpamRats",
+	"dnsbl.sorbs.net":        "SORBs",
 }
 
 // GetReverseIP function
@@ -56,12 +53,10 @@ func IPIsListed(ip string) (ipInList []string, listen bool) {
 					break
 				}
 
-				for _, listenIP := range listenIps {
-					if v.String() == listenIP {
-						ipInList = append(ipInList, dnsblName)
-						finded = true
-						break
-					}
+				if listenSubnet.Contains(v) {
+					ipInList = append(ipInList, dnsblName)
+					finded = true
+					break
 				}
 			}
 		}
