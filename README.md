@@ -106,21 +106,24 @@ import (
 var bot telegramBot
 
 func findIP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "text/plain")
 	params := mux.Vars(r)
-	go func(p map[string]string) {
-		dnsbls, isListed := dnsbl.IPIsListed(p["ip"])
-
-		if isListed {
-			msg := fmt.Sprintf("Info about IP: %s", p["ip"])
-			msg += "\nAddress in blacklists:"
-			for _, dnsbl := range dnsbls {
-				msg += fmt.Sprintf("\n%s", dnsbl)
-			}
-			bot.sendMessageToChannel(msg)
+	_, notify := r.URL.Query()["notify"]
+	dnsbls, isListed := dnsbl.IPIsListed(params["ip"])
+	var msg string
+	if isListed {
+		msg = fmt.Sprintf("Info about IP: %s", params["ip"])
+		msg += "\nAddress in blacklists:"
+		for _, dnsbl := range dnsbls {
+			msg += fmt.Sprintf("\n%s", dnsbl)
 		}
-	}(params)
 
+		if notify && bot.Bot != nil && bot.Connected {
+			bot.SendMessageToChannel(msg)
+		}
+	}
+
+	fmt.Fprintf(w, "%v\n", msg)
 }
 
 func main() {
